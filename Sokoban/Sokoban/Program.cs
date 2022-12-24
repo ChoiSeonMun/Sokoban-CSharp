@@ -40,6 +40,10 @@ namespace Sokoban
             const int INITIAL_WALL_X = 6;
             const int INITIAL_WALL_Y = 5;
             const string WALL_STRING = "W";
+            
+            const int INITIAL_GOAL_X = 7;
+            const int INITIAL_GOAL_Y = 8;
+            const string GOAL_STRING = "G";
 
             // 플레이어 위치 좌표
             int playerX = INITIAL_PLAYER_X;
@@ -53,6 +57,10 @@ namespace Sokoban
             // 벽 좌표
             int wallX = INITIAL_WALL_X;
             int wallY = INITIAL_WALL_Y;
+            
+            // 골 좌표
+            int goalX = INITIAL_GOAL_X;
+            int goalY = INITIAL_GOAL_Y;
 
             // 게임 루프
             while (true)
@@ -71,6 +79,10 @@ namespace Sokoban
                 // 벽을 그려준다.
                 Console.SetCursorPosition(wallX, wallY);
                 Console.Write(WALL_STRING);
+                
+                // 목표 지점을 그려준다.
+                Console.SetCursorPosition(goalX, goalY);
+                Console.Write(GOAL_STRING);
 
                 // ProcessInput
                 ConsoleKeyInfo currentKeyInfo = Console.ReadKey();
@@ -173,7 +185,18 @@ namespace Sokoban
                             Console.WriteLine("오류 발생");
                             break;
                     }
+
+                    // 목표 달성 확인
+                    if (boxX == goalX && boxY == goalY)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("축하합니다. 클리어 하셨습니다.");
+
+                        break;
+                    }
                 }
+
+                
             }
         }
     }
