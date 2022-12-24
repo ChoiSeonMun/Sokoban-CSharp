@@ -33,8 +33,6 @@ namespace Sokoban
             const int PLAYER_MOVE_RANGE = 1;
             const string PLAYER_STRING = "P";
 
-            const int INITIAL_BOX_X = 5;
-            const int INITIAL_BOX_Y = 5;
             const string BOX_STRING = "B";
 
             const int INITIAL_WALL_X = 6;
@@ -45,23 +43,26 @@ namespace Sokoban
             const int INITIAL_GOAL_Y = 8;
             const string GOAL_STRING = "G";
 
+            const int GOAL_COUNT = 3;
+            const int BOX_COUNT = GOAL_COUNT;
+
             // 플레이어 위치 좌표
             int playerX = INITIAL_PLAYER_X;
             int playerY = INITIAL_PLAYER_Y;
             Direction playerDirection = Direction.Left;
 
             // 박스 좌표
-            int boxX = INITIAL_BOX_X;
-            int boxY = INITIAL_BOX_Y;
+            int[] boxPositionsX = new int[BOX_COUNT] { 1, 3, 5 };
+            int[] boxPositionsY = new int[BOX_COUNT] { 4, 2, 9 };
 
             // 벽 좌표
             int wallX = INITIAL_WALL_X;
             int wallY = INITIAL_WALL_Y;
             
             // 골 좌표
-            int goalX = INITIAL_GOAL_X;
-            int goalY = INITIAL_GOAL_Y;
-
+            int[] goalPositionsX = new int[GOAL_COUNT] { 3, 5, 8 };
+            int[] goalPositionsY = new int[GOAL_COUNT] { 3, 6, 3 };
+            
             // 게임 루프
             while (true)
             {
@@ -73,16 +74,22 @@ namespace Sokoban
                 Console.Write(PLAYER_STRING);
 
                 // 박스를 그려준다.
-                Console.SetCursorPosition(boxX, boxY);
-                Console.Write(BOX_STRING);
+                for (int i = 0; i < BOX_COUNT; ++i)
+                {
+                    Console.SetCursorPosition(boxPositionsX[i], boxPositionsY[i]);
+                    Console.Write(BOX_STRING);
+                }
 
                 // 벽을 그려준다.
                 Console.SetCursorPosition(wallX, wallY);
                 Console.Write(WALL_STRING);
                 
                 // 목표 지점을 그려준다.
-                Console.SetCursorPosition(goalX, goalY);
-                Console.Write(GOAL_STRING);
+                for (int i = 0; i < GOAL_COUNT; ++i)
+                {
+                    Console.SetCursorPosition(goalPositionsX[i], goalPositionsY[i]);
+                    Console.Write(GOAL_STRING);
+                }
 
                 // ProcessInput
                 ConsoleKeyInfo currentKeyInfo = Console.ReadKey();
@@ -137,8 +144,16 @@ namespace Sokoban
                 }
 
                 // 박스 이동
-                if (playerX == boxX && playerY == boxY)
+                for (int i = 0; i < BOX_COUNT; ++i)
                 {
+                    int boxX = boxPositionsX[i];
+                    int boxY = boxPositionsY[i];
+
+                    if (playerX != boxX || playerY != boxY)
+                    {
+                        continue;
+                    }
+
                     switch (playerDirection)
                     {
                         case Direction.Left:
@@ -186,17 +201,30 @@ namespace Sokoban
                             break;
                     }
 
-                    // 목표 달성 확인
-                    if (boxX == goalX && boxY == goalY)
-                    {
-                        Console.Clear();
-                        Console.WriteLine("축하합니다. 클리어 하셨습니다.");
+                    boxPositionsX[i] = boxX;
+                    boxPositionsY[i] = boxY;
+                }
 
-                        break;
+                // 목표 달성 확인
+                int matchCount = 0;
+                for (int i = 0; i < GOAL_COUNT; ++i)
+                {
+                    for (int j = 0; j < BOX_COUNT; ++j)
+                    {
+                        if (goalPositionsX[i] == boxPositionsX[j] && goalPositionsY[i] == boxPositionsY[j])
+                        {
+                            ++matchCount;
+                        }
                     }
                 }
 
-                
+                if (matchCount == GOAL_COUNT)
+                {
+                    Console.Clear();
+                    Console.WriteLine("축하합니다. 클리어 하셨습니다.");
+
+                    break;
+                }
             }
         }
     }
